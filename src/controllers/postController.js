@@ -4,8 +4,8 @@ const craetePost = async (req, res) => {
   try {
     const { id, username } = req.user;
     const { title, body } = req.body;
-
-    if(!title || !body) {
+    
+    if(!id ||!username || !title || !body) {
       return res.status(400).send({
         message: 'some field must be filled, cannot be empty'
       })
@@ -24,7 +24,7 @@ const craetePost = async (req, res) => {
   } catch (error) {
     return res.send({
       message: 'error occured',
-      data: error
+      data: error.message
     })
   }
 }
@@ -42,7 +42,7 @@ const getAllPost = async (req, res) => {
   } catch (error) {
     return res.send({
       message: 'error occured',
-      data: error
+      data: error.message
     })
   }
 }
@@ -52,6 +52,12 @@ const getPostsByUsername = async (req, res) => {
     const { username } = req.params;
     const postByUsername = await postNew.findAll({where: {username: username}});
 
+    if(!postByUsername) {
+      return res.status(400).send({
+        message: 'username not found'
+      })
+    }
+
     res.status(200).send({
       message: 'data post retrieved',
       status: 'ok',
@@ -60,7 +66,7 @@ const getPostsByUsername = async (req, res) => {
   } catch (error) {
     return res.send({
       message: 'error occured',
-      data: error
+      data: error.message
     })
   }
 }
@@ -68,7 +74,6 @@ const getPostsByUsername = async (req, res) => {
 const getPostById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id)
     const postById = await postNew.findOne({where: {id: id}});
 
     if(!postById) {
@@ -85,7 +90,7 @@ const getPostById = async (req, res) => {
   } catch (error) {
     return res.send({
       message: 'error occured',
-      data: error
+      data: error.message
     })
   }
 }
